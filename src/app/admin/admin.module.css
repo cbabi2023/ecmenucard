@@ -81,6 +81,41 @@
   outline: none;
 }
 
+.passwordField {
+  position: relative;
+}
+
+.passwordInput {
+  padding-right: 48px;
+}
+
+.passwordToggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.passwordToggle:hover {
+  color: var(--secondary);
+}
+
+.passwordToggle:focus-visible {
+  outline: 2px solid var(--secondary-light);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .input:focus {
   border-color: var(--secondary-light);
   box-shadow: 0 0 0 3px var(--secondary-glow);

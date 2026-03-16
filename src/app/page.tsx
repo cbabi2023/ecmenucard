@@ -91,7 +91,7 @@ export default function CustomerPage() {
 
   return (
     <div className={styles.page}>
-      <Header title="EC Menu Card" showAdmin />
+      <Header title="EC Menu Card" />
 
       <CategoryTabs
         categories={categories}

@@ -23,3 +23,9 @@ Summary: Reviewed code issues, fixed React effect lint violations and cleanup wa
 Files changed: src/app/admin/categories/page.tsx, src/app/admin/menu-items/page.tsx, src/app/admin/page.tsx, src/app/components/MenuCard.tsx, src/app/page.tsx, WORK_LOG.md
 Verification: `npm run lint` completed with no problems, `npm run build` completed successfully, and workspace diagnostics reported no errors in the updated files.
 Issues: none
+
+## 2026-03-16 18:39:00 +05:30
+Summary: Removed the customer-facing settings icon from the menu card header and added a password show/hide button to the admin login form.
+Files changed: src/app/components/Header.tsx, src/app/page.tsx, src/app/admin/page.tsx, src/app/admin/admin.module.css, WORK_LOG.md
+Verification: `npm run lint` completed with no problems, `npm run build` completed successfully, and workspace diagnostics reported no errors in the updated files.
+Issues: none

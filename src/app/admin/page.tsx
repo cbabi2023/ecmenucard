@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Header from '../components/Header';
-import { FiLock, FiLogIn, FiMail } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiLock, FiLogIn, FiMail } from 'react-icons/fi';
 import styles from './admin.module.css';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -67,15 +68,26 @@ export default function AdminLogin() {
               <label htmlFor="adminPassword">
                 <FiLock size={12} style={{ marginRight: 4 }} /> Password
               </label>
-              <input
-                id="adminPassword"
-                type="password"
-                className={styles.input}
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className={styles.passwordField}>
+                <input
+                  id="adminPassword"
+                  type={showPassword ? 'text' : 'password'}
+                  className={`${styles.input} ${styles.passwordInput}`}
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.passwordToggle}
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                </button>
+              </div>
             </div>
 
             {error && <p className={styles.error}>{error}</p>}

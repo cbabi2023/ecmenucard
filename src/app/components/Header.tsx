@@ -2,16 +2,15 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { FiMenu, FiArrowLeft, FiSettings } from 'react-icons/fi';
+import { FiMenu, FiArrowLeft } from 'react-icons/fi';
 import styles from './Header.module.css';
 
 interface HeaderProps {
   title?: string;
   showBack?: boolean;
-  showAdmin?: boolean;
 }
 
-export default function Header({ title = 'EC Menu Card', showBack = false, showAdmin = false }: HeaderProps) {
+export default function Header({ title = 'EC Menu Card', showBack = false }: HeaderProps) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin');
 
@@ -32,13 +31,7 @@ export default function Header({ title = 'EC Menu Card', showBack = false, showA
 
         <h1 className={styles.title}>{title}</h1>
 
-        {showAdmin && !isAdmin ? (
-          <Link href="/admin" className={styles.adminBtn}>
-            <FiSettings size={18} />
-          </Link>
-        ) : (
-          <div style={{ width: 36 }} />
-        )}
+        <div style={{ width: 36 }} aria-hidden="true" />
       </div>
     </header>
   );

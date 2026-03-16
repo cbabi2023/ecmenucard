@@ -1,5 +1,11 @@
 # WORK_LOG
 
+## 2026-03-16 19:37:23 +05:30
+Summary: Increased pagination limit to show up to 100 items per page in both admin menu items and customer menu pages.
+Files changed: src/app/admin/menu-items/page.tsx, src/app/page.tsx, WORK_LOG.md
+Verification: Updated page-size constants to 100, then ran npm run lint and npm run build; both passed.
+Issues: none
+
 ## 2026-03-16 19:36:20 +05:30
 Summary: Added a global bottom attribution footer with creator symbol mark and "Created by abijithcb.com" link across the app.
 Files changed: src/app/layout.tsx, src/app/globals.css, WORK_LOG.md

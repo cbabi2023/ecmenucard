@@ -1,5 +1,11 @@
 # WORK_LOG
 
+## 2026-03-17 — Remove hero description text and pills from hero card
+Summary: Removed the `<p className={styles.heroText}>` description paragraph and `<div className={styles.heroPills}>` (3 pill spans: "Freshly prepared", "Fast WhatsApp ordering", "Curated every day") from the customer landing page hero card. Hero section now flows directly from heroTitle to heroStats.
+Files changed: src/app/page.tsx
+Verification: `npm run lint` — 0 problems. `npm run build` — all 6 routes compiled successfully. Committed as `3cf3897` and pushed to `main`.
+Issues: none
+
 ## 2026-03-16 18:16:00 +05:30
 Summary: Cleared stale Next.js dev server processes, fixed Turbopack root configuration for this repo, and restarted the local website successfully.
 Files changed: next.config.ts, WORK_LOG.md

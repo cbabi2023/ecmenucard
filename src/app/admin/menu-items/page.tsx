@@ -7,6 +7,9 @@ import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave, FiUpload, FiImage } from 'react
 import styles from './menuitems.module.css';
 
 const PAGE_SIZE = 10;
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const TARGET_COMPRESSED_BYTES = 400 * 1024;
+const HARD_COMPRESSED_MAX_BYTES = 1024 * 1024;
 
 const emptyForm = {
   name: '',
@@ -19,36 +22,89 @@ const emptyForm = {
   sort_order: 0,
 };
 
+async function canvasToBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error('Image compression failed'));
+          return;
+        }
+        resolve(blob);
+      },
+      'image/jpeg',
+      quality,
+    );
+  });
+}
+
 async function compressImage(file: File): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const objectUrl = URL.createObjectURL(file);
-    img.onload = () => {
-      const MAX_DIM = 800;
-      let { width, height } = img;
-      if (width > MAX_DIM || height > MAX_DIM) {
-        if (width > height) {
-          height = Math.round((height * MAX_DIM) / width);
-          width = MAX_DIM;
-        } else {
-          width = Math.round((width * MAX_DIM) / height);
-          height = MAX_DIM;
+    img.onload = async () => {
+      try {
+        const MAX_DIM = 1200;
+        const MIN_DIM = 480;
+        const originalWidth = img.width;
+        const originalHeight = img.height;
+        const longSide = Math.max(originalWidth, originalHeight);
+        const scaleCap = longSide > MAX_DIM ? MAX_DIM / longSide : 1;
+        let width = Math.max(Math.round(originalWidth * scaleCap), 1);
+        let height = Math.max(Math.round(originalHeight * scaleCap), 1);
+
+        const qualities = [0.78, 0.7, 0.62, 0.55, 0.48, 0.42, 0.36];
+        let bestBlob: Blob | null = null;
+
+        // Try multiple quality and size steps and keep the smallest valid blob.
+        for (let step = 0; step < 4; step += 1) {
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            throw new Error('Canvas unavailable');
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+
+          for (const quality of qualities) {
+            const blob = await canvasToBlob(canvas, quality);
+            if (!bestBlob || blob.size < bestBlob.size) {
+              bestBlob = blob;
+            }
+            if (blob.size <= TARGET_COMPRESSED_BYTES) {
+              URL.revokeObjectURL(objectUrl);
+              resolve(blob);
+              return;
+            }
+          }
+
+          const nextWidth = Math.max(Math.round(width * 0.85), MIN_DIM);
+          const nextHeight = Math.max(Math.round(height * 0.85), MIN_DIM);
+          if (nextWidth === width && nextHeight === height) {
+            break;
+          }
+          width = nextWidth;
+          height = nextHeight;
         }
+
+        URL.revokeObjectURL(objectUrl);
+        if (!bestBlob) {
+          reject(new Error('Image compression failed'));
+          return;
+        }
+
+        // Ensure we still store a significantly reduced file.
+        if (bestBlob.size > HARD_COMPRESSED_MAX_BYTES || bestBlob.size >= file.size) {
+          reject(new Error('Unable to compress image enough. Please use a smaller image.'));
+          return;
+        }
+
+        resolve(bestBlob);
+      } catch (error) {
+        URL.revokeObjectURL(objectUrl);
+        reject(error instanceof Error ? error : new Error('Image compression failed'));
       }
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d')!;
-      ctx.drawImage(img, 0, 0, width, height);
-      URL.revokeObjectURL(objectUrl);
-      canvas.toBlob(
-        (blob) => {
-          if (blob) resolve(blob);
-          else reject(new Error('Image compression failed'));
-        },
-        'image/jpeg',
-        0.7,
-      );
     };
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
@@ -155,7 +211,7 @@ function MenuItemsPage() {
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > MAX_UPLOAD_BYTES) {
       setUploadError('Image must be 5 MB or smaller.');
       e.target.value = '';
       return;
@@ -164,6 +220,12 @@ function MenuItemsPage() {
     setUploading(true);
     try {
       const compressed = await compressImage(file);
+
+      if (compressed.size > HARD_COMPRESSED_MAX_BYTES) {
+        setUploadError('Compressed image is still too large. Please choose a smaller image.');
+        return;
+      }
+
       const path = `items/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
       const { error: storageError } = await supabase.storage
         .from('menu-images')

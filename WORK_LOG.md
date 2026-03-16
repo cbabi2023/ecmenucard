@@ -1,5 +1,11 @@
 # WORK_LOG
 
+## 2026-03-16 19:28:36 +05:30
+Summary: Enforced fixed upload preview container size so uploaded images always fill the same frame without resizing layout.
+Files changed: src/app/admin/menu-items/menuitems.module.css, WORK_LOG.md
+Verification: Confirmed preview frame now has fixed height (160px) and image fills with width 100%, height 100%, object-fit cover; ran `npm run lint` successfully.
+Issues: none
+
 ## 2026-03-16 19:23:13 +05:30
 Summary: Fixed Supabase schema rerun failures by making policy and index creation idempotent.
 Files changed: supabase-schema.sql, WORK_LOG.md

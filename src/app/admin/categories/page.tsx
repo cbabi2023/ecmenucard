@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase, Category } from '@/lib/supabase';
 import Header from '../../components/Header';
@@ -16,35 +16,47 @@ export default function CategoriesPageWrapper() {
 }
 
 function CategoriesPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(() => searchParams.get('add') === 'true');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: '', description: '', sort_order: 0, is_active: true });
   const [saving, setSaving] = useState(false);
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const auth = localStorage.getItem('admin_auth');
     if (auth !== 'true') {
       router.push('/admin');
-      return;
     }
-    if (searchParams.get('add') === 'true') {
-      setShowForm(true);
-    }
-  }, [router, searchParams]);
+  }, [router]);
 
-  const fetchCategories = useCallback(async () => {
+  const refreshCategories = async () => {
     const { data } = await supabase.from('categories').select('*').order('sort_order');
-    if (data) setCategories(data);
-    setLoading(false);
-  }, []);
+    setCategories(data ?? []);
+  };
 
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    let isMounted = true;
+
+    const loadCategories = async () => {
+      const { data } = await supabase.from('categories').select('*').order('sort_order');
+
+      if (!isMounted) {
+        return;
+      }
+
+      setCategories(data ?? []);
+      setLoading(false);
+    };
+
+    void loadCategories();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const resetForm = () => {
     setFormData({ name: '', description: '', sort_order: 0, is_active: true });
@@ -75,7 +87,7 @@ function CategoriesPage() {
         await supabase.from('categories').insert(formData);
       }
       resetForm();
-      fetchCategories();
+      await refreshCategories();
     } catch (err) {
       console.error('Error saving category:', err);
     }
@@ -86,12 +98,12 @@ function CategoriesPage() {
     if (!confirm('Are you sure you want to delete this category? All associated menu items will also be deleted.')) return;
 
     await supabase.from('categories').delete().eq('id', id);
-    fetchCategories();
+    await refreshCategories();
   };
 
   const toggleActive = async (id: string, currentValue: boolean) => {
     await supabase.from('categories').update({ is_active: !currentValue }).eq('id', id);
-    fetchCategories();
+    await refreshCategories();
   };
 
   return (

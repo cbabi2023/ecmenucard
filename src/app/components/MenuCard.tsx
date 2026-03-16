@@ -19,6 +19,7 @@ export default function MenuCard({ item, cartItem, onAdd, onIncrement, onDecreme
     <div className={styles.card}>
       {item.image_url && (
         <div className={styles.imageWrapper}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={item.image_url} alt={item.name} className={styles.image} />
           {!item.is_available && <div className={styles.unavailableBadge}>Unavailable</div>}
         </div>

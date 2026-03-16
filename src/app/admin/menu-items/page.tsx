@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase, Category, MenuItem } from '@/lib/supabase';
 import Header from '../../components/Header';
@@ -27,41 +27,57 @@ export default function MenuItemsPageWrapper() {
 }
 
 function MenuItemsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [items, setItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(() => searchParams.get('add') === 'true');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string>('all');
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const auth = localStorage.getItem('admin_auth');
     if (auth !== 'true') {
       router.push('/admin');
-      return;
     }
-    if (searchParams.get('add') === 'true') {
-      setShowForm(true);
-    }
-  }, [router, searchParams]);
+  }, [router]);
 
-  const fetchData = useCallback(async () => {
+  const refreshData = async () => {
     const [itemRes, catRes] = await Promise.all([
       supabase.from('menu_items').select('*, category:categories(*)').order('sort_order'),
       supabase.from('categories').select('*').order('sort_order'),
     ]);
-    if (itemRes.data) setItems(itemRes.data);
-    if (catRes.data) setCategories(catRes.data);
-    setLoading(false);
-  }, []);
+    setItems(itemRes.data ?? []);
+    setCategories(catRes.data ?? []);
+  };
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    let isMounted = true;
+
+    const loadData = async () => {
+      const [itemRes, catRes] = await Promise.all([
+        supabase.from('menu_items').select('*, category:categories(*)').order('sort_order'),
+        supabase.from('categories').select('*').order('sort_order'),
+      ]);
+
+      if (!isMounted) {
+        return;
+      }
+
+      setItems(itemRes.data ?? []);
+      setCategories(catRes.data ?? []);
+      setLoading(false);
+    };
+
+    void loadData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const resetForm = () => {
     setFormData(emptyForm);
@@ -101,7 +117,7 @@ function MenuItemsPage() {
         await supabase.from('menu_items').insert(saveData);
       }
       resetForm();
-      fetchData();
+      await refreshData();
     } catch (err) {
       console.error('Error saving menu item:', err);
     }
@@ -111,12 +127,12 @@ function MenuItemsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this menu item?')) return;
     await supabase.from('menu_items').delete().eq('id', id);
-    fetchData();
+    await refreshData();
   };
 
   const toggleAvailability = async (id: string, currentValue: boolean) => {
     await supabase.from('menu_items').update({ is_available: !currentValue }).eq('id', id);
-    fetchData();
+    await refreshData();
   };
 
   const filteredItems = filterCategory === 'all'
@@ -284,7 +300,10 @@ function MenuItemsPage() {
                 >
                   <div className={styles.itemLeft}>
                     {item.image_url && (
-                      <img src={item.image_url} alt={item.name} className={styles.itemImage} />
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={item.image_url} alt={item.name} className={styles.itemImage} />
+                      </>
                     )}
                     <div className={styles.itemInfo}>
                       <div className={styles.itemTop}>

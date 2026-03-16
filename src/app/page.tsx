@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase, Category, MenuItem, CartItem } from '@/lib/supabase';
 import Header from './components/Header';
 import CategoryTabs from './components/CategoryTabs';
@@ -19,25 +19,37 @@ export default function CustomerPage() {
   const [orderFormOpen, setOrderFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [catRes, menuRes] = await Promise.all([
-        supabase.from('categories').select('*').eq('is_active', true).order('sort_order'),
-        supabase.from('menu_items').select('*, category:categories(*)').eq('is_available', true).order('sort_order'),
-      ]);
-
-      if (catRes.data) setCategories(catRes.data);
-      if (menuRes.data) setMenuItems(menuRes.data);
-    } catch (err) {
-      console.error('Error fetching data:', err);
-    }
-    setLoading(false);
-  }, []);
-
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    let isMounted = true;
+
+    const loadData = async () => {
+      try {
+        const [catRes, menuRes] = await Promise.all([
+          supabase.from('categories').select('*').eq('is_active', true).order('sort_order'),
+          supabase.from('menu_items').select('*, category:categories(*)').eq('is_available', true).order('sort_order'),
+        ]);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setCategories(catRes.data ?? []);
+        setMenuItems(menuRes.data ?? []);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      }
+
+      if (isMounted) {
+        setLoading(false);
+      }
+    };
+
+    void loadData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const filteredItems = activeCategory
     ? menuItems.filter((item) => item.category_id === activeCategory)

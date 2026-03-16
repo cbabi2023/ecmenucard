@@ -1,5 +1,11 @@
 # WORK_LOG
 
+## 2026-03-16 19:23:13 +05:30
+Summary: Fixed Supabase schema rerun failures by making policy and index creation idempotent.
+Files changed: supabase-schema.sql, WORK_LOG.md
+Verification: Replaced plain CREATE POLICY with DROP POLICY IF EXISTS + CREATE POLICY for all categories/menu_items/storage policies; replaced CREATE INDEX with CREATE INDEX IF NOT EXISTS for all indexes.
+Issues: none
+
 ## 2026-03-16 — Image upload, compression, loading skeletons, pagination
 Summary: Added image upload to admin menu-items form (replaces image URL text field). Images are compressed client-side using Canvas API (max 800px, JPEG quality 0.70, targeting ~10% of original size). File size capped at 5 MB before compression. Images upload to Supabase Storage bucket `menu-images`; public URL stored in `image_url`. Added upload preview with remove button. Disabled Save while uploading. Added image loading skeleton shimmer to MenuCard (green shimmer while image loads, fade-in on load). Added pagination to both admin list (10 items/page) and customer menu page (12 items/page); customer page resets to page 1 on category change. Added Supabase storage bucket setup SQL to `supabase-schema.sql`.
 Files changed: src/app/admin/menu-items/page.tsx, src/app/admin/menu-items/menuitems.module.css, src/app/components/MenuCard.tsx, src/app/components/MenuCard.module.css, src/app/page.tsx, src/app/page.module.css, supabase-schema.sql

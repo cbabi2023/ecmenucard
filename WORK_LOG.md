@@ -1,5 +1,11 @@
 # WORK_LOG
 
+## 2026-03-16 19:30:42 +05:30
+Summary: Strengthened image upload compression to ensure image is compressed before storage with iterative quality and dimension reduction, targeting a smaller payload and rejecting uploads that cannot be compressed sufficiently.
+Files changed: src/app/admin/menu-items/page.tsx, WORK_LOG.md
+Verification: Compression now runs in multiple quality passes (JPEG) with progressive resizing before upload; upload path uses compressed blob only; `npm run lint` and `npm run build` both passed.
+Issues: none
+
 ## 2026-03-16 19:28:36 +05:30
 Summary: Enforced fixed upload preview container size so uploaded images always fill the same frame without resizing layout.
 Files changed: src/app/admin/menu-items/menuitems.module.css, WORK_LOG.md

@@ -33,6 +33,7 @@ export default function CartDrawer({
     <>
       <div className={styles.overlay} onClick={onClose} />
       <div className={styles.drawer}>
+        <div className={styles.dragHandle} aria-hidden="true" />
         <div className={styles.header}>
           <div>
             <h2 className={styles.title}>Your Order</h2>

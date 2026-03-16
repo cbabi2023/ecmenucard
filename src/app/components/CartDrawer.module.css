@@ -4,9 +4,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.48);
   z-index: 200;
-  animation: fadeOverlay 0.25s ease forwards;
+  animation: fadeOverlay 0.22s ease forwards;
 }
 
 @keyframes fadeOverlay {
@@ -14,26 +14,41 @@
   to { opacity: 1; }
 }
 
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
 .drawer {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  max-height: 85vh;
+  max-height: 88vh;
   background: var(--primary);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  border-radius: 24px 24px 0 0;
   z-index: 201;
   display: flex;
   flex-direction: column;
-  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  box-shadow: 0 -4px 30px rgba(0,0,0,0.15);
+  animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.18);
+  overscroll-behavior: contain;
+}
+
+.dragHandle {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+  margin: 10px auto 0;
+  flex-shrink: 0;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 20px 16px;
+  padding: 14px 20px 14px;
   border-bottom: 1px solid var(--border-light);
 }
 
@@ -201,7 +216,7 @@
 }
 
 .footer {
-  padding: 16px 20px;
+  padding: 14px 20px;
   padding-bottom: max(16px, env(safe-area-inset-bottom));
   border-top: 1px solid var(--border-light);
   background: var(--primary);
@@ -236,13 +251,15 @@
   background: #25D366;
   color: white;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: all var(--transition-fast);
   box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+  touch-action: manipulation;
+  min-height: 52px;
 }
 
 .checkoutBtn:hover {

@@ -24,7 +24,7 @@ export default function MenuCard({ item, cartItem, onAdd, onIncrement, onDecreme
 
   return (
     <div className={styles.card}>
-      <div className={styles.imageWrapper}>
+      <div className={styles.imageBox}>
         {item.image_url ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -33,54 +33,50 @@ export default function MenuCard({ item, cartItem, onAdd, onIncrement, onDecreme
         ) : (
           <div className={styles.imageFallback}>
             <span className={styles.fallbackInitials}>{fallbackInitials}</span>
-            <span className={styles.fallbackLabel}>Signature Selection</span>
           </div>
         )}
-        <div className={styles.imageShade} />
-        <div className={styles.cardBadges}>
-          <span className={styles.categoryBadge}>{categoryName}</span>
-          {item.is_available ? (
-            <span className={styles.freshBadge}>Fresh Today</span>
-          ) : (
-            <div className={styles.unavailableBadge}>Unavailable</div>
-          )}
-        </div>
+        {!item.is_available && (
+          <div className={styles.soldOutOverlay}>
+            <span className={styles.soldOutText}>Unavailable</span>
+          </div>
+        )}
       </div>
+
       <div className={styles.content}>
-        <div className={styles.top}>
-          <div className={styles.info}>
-            <div className={styles.titleRow}>
-              <h3 className={styles.name}>{item.name}</h3>
-              <span className={styles.priceTag}>₹{Number(item.price).toFixed(0)}</span>
-            </div>
-            {item.description && <p className={styles.description}>{item.description}</p>}
-            <div className={styles.metaRow}>
-              <span className={styles.quantity}>{item.quantity}</span>
-              <span className={styles.dot} />
-              <span className={styles.signatureNote}>Chef-styled serving</span>
-            </div>
-          </div>
+        <div className={styles.badgeRow}>
+          <span className={styles.categoryBadge}>{categoryName}</span>
+          {item.is_available && <span className={styles.freshBadge}>Fresh Today</span>}
         </div>
-        <div className={styles.bottom}>
-          <div className={styles.bottomCopy}>
-            <span className={styles.bottomLabel}>Add to order</span>
-            <span className={styles.price}>Premium fresh prep</span>
-          </div>
+        <h3 className={styles.name}>{item.name}</h3>
+        {item.description && (
+          <p className={styles.description}>{item.description}</p>
+        )}
+        <div className={styles.priceRow}>
+          <span className={styles.price}>₹{Number(item.price).toFixed(0)}</span>
           {item.is_available && (
             <div className={styles.actions}>
               {quantity > 0 ? (
                 <div className={styles.quantityControl}>
-                  <button className={styles.qtyBtn} onClick={() => onDecrement(item.id)}>
-                    <FiMinus size={14} />
+                  <button
+                    className={styles.qtyBtn}
+                    onClick={() => onDecrement(item.id)}
+                    aria-label="Decrease quantity"
+                  >
+                    <FiMinus size={12} />
                   </button>
                   <span className={styles.qtyValue}>{quantity}</span>
-                  <button className={styles.qtyBtn} onClick={() => onIncrement(item.id)}>
-                    <FiPlus size={14} />
+                  <button
+                    className={styles.qtyBtn}
+                    onClick={() => onIncrement(item.id)}
+                    aria-label="Increase quantity"
+                  >
+                    <FiPlus size={12} />
                   </button>
                 </div>
               ) : (
                 <button className={styles.addBtn} onClick={() => onAdd(item)}>
-                  <FiPlus size={14} /> Add
+                  <FiPlus size={14} />
+                  <span className={styles.addBtnText}>Add</span>
                 </button>
               )}
             </div>

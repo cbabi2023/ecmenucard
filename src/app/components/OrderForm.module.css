@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.55);
   z-index: 300;
   animation: fadeOverlay 0.2s ease forwards;
 }
@@ -14,18 +14,24 @@
   to { opacity: 1; }
 }
 
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
 .modal {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  max-height: 90vh;
+  max-height: 92vh;
   background: var(--primary);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  border-radius: 24px 24px 0 0;
   z-index: 301;
   overflow-y: auto;
-  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  box-shadow: 0 -4px 30px rgba(0,0,0,0.2);
+  overscroll-behavior: contain;
+  animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.2);
 }
 
 .header {
@@ -133,11 +139,12 @@
   border: 2px solid var(--border);
   border-radius: var(--radius-md);
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+  font-size: max(16px, 1rem); /* prevent iOS auto-zoom */
   color: var(--text-primary);
   background: var(--primary);
   transition: border-color var(--transition-fast);
   outline: none;
+  -webkit-appearance: none;
 }
 
 .input:focus {
@@ -160,13 +167,15 @@
   background: #25D366;
   color: white;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: all var(--transition-fast);
   box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+  touch-action: manipulation;
+  min-height: 52px;
 }
 
 .submitBtn:hover {

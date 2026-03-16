@@ -1,12 +1,12 @@
 .wrapper {
   position: sticky;
-  top: 63px;
+  top: 62px;
   z-index: 90;
-  background: rgba(248, 250, 248, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border-light);
+  background: rgba(245, 250, 243, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(46, 125, 50, 0.12);
 }
 
 .scrollContainer {
@@ -16,25 +16,30 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding: 0 16px;
-  max-width: 480px;
-  margin: 0 auto;
 }
 
 .scrollContainer::-webkit-scrollbar {
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .scrollContainer {
     max-width: 720px;
+    margin: 0 auto;
     padding: 0 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .scrollContainer {
+    max-width: 1100px;
   }
 }
 
 .tab {
   flex-shrink: 0;
   padding: 8px 18px;
-  border: 2px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius-full);
   background: var(--primary);
   color: var(--text-secondary);
@@ -44,16 +49,19 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  min-height: 38px;
+  touch-action: manipulation;
 }
 
 .tab:hover {
   border-color: var(--secondary-lighter);
   color: var(--secondary);
+  background: rgba(27, 94, 32, 0.04);
 }
 
 .tab.active {
   background: var(--secondary-gradient);
   color: white;
-  border-color: var(--secondary);
-  box-shadow: var(--shadow-green);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(27, 94, 32, 0.3);
 }

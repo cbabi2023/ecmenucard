@@ -1,10 +1,10 @@
-.page {
+﻿.page {
   min-height: 100dvh;
   position: relative;
   background:
-    radial-gradient(circle at top left, rgba(139, 195, 74, 0.18), transparent 30%),
-    radial-gradient(circle at top right, rgba(27, 94, 32, 0.16), transparent 28%),
-    linear-gradient(180deg, #f6fbf3 0%, #eef5ec 100%);
+    radial-gradient(circle at top left, rgba(139, 195, 74, 0.15), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(27, 94, 32, 0.1), transparent 28%),
+    linear-gradient(180deg, #f5fbf2 0%, #edf4eb 100%);
   padding-bottom: 100px;
 }
 
@@ -13,68 +13,87 @@
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
-  background-size: 36px 36px;
-  opacity: 0.18;
+    linear-gradient(rgba(255, 255, 255, 0.38) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.32) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.15;
   pointer-events: none;
+  z-index: 0;
 }
 
 .main {
   position: relative;
   z-index: 1;
-  padding: 18px 0;
+  padding: 14px 0 0;
 }
 
+/* ---- Full-width container on mobile, max-width on larger screens ---- */
 .container {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 0 16px;
+  width: 100%;
+  padding: 0 14px;
 }
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1100px;
+  }
+}
+
+/* ==============================
+   Hero Section
+   ============================== */
 
 .hero {
   position: relative;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .heroBackdrop {
   position: absolute;
-  inset: 10px 14px -12px;
-  border-radius: 30px;
-  background: linear-gradient(135deg, rgba(27, 94, 32, 0.18), rgba(139, 195, 74, 0.08));
-  filter: blur(20px);
+  inset: 8px 12px -10px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, rgba(27, 94, 32, 0.16), rgba(139, 195, 74, 0.06));
+  filter: blur(18px);
 }
 
 .heroCard {
   position: relative;
   overflow: hidden;
-  padding: 22px 20px;
-  border-radius: 28px;
+  padding: 18px 18px 16px;
+  border-radius: 22px;
   background:
-    radial-gradient(circle at top right, rgba(255, 255, 255, 0.32), transparent 28%),
-    linear-gradient(135deg, #123f1a 0%, #1b5e20 38%, #2f7e38 100%);
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.28), transparent 26%),
+    linear-gradient(145deg, #10381a 0%, #1b5e20 40%, #2d7835 100%);
   color: white;
-  box-shadow: 0 24px 52px rgba(18, 63, 26, 0.2);
+  box-shadow: 0 20px 48px rgba(16, 56, 26, 0.22);
 }
 
 .heroCard::after {
   content: '';
   position: absolute;
-  top: -24px;
-  right: -22px;
-  width: 140px;
-  height: 140px;
+  top: -20px;
+  right: -18px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .heroKicker {
   display: inline-flex;
-  margin-bottom: 10px;
-  padding: 6px 10px;
+  margin-bottom: 8px;
+  padding: 5px 10px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.14);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -83,21 +102,19 @@
 .heroTitle {
   position: relative;
   z-index: 1;
-  max-width: 12ch;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-family: 'Playfair Display', serif;
-  font-size: clamp(2rem, 8vw, 2.8rem);
-  line-height: 1.02;
+  font-size: clamp(1.55rem, 6.5vw, 2.4rem);
+  line-height: 1.08;
 }
 
 .heroText {
   position: relative;
   z-index: 1;
-  max-width: 48ch;
-  margin-bottom: 16px;
-  color: rgba(244, 250, 241, 0.86);
-  font-size: 0.92rem;
-  line-height: 1.7;
+  margin-bottom: 14px;
+  color: rgba(240, 250, 238, 0.84);
+  font-size: 0.88rem;
+  line-height: 1.68;
 }
 
 .heroPills {
@@ -105,17 +122,18 @@
   z-index: 1;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 18px;
+  gap: 6px;
+  margin-bottom: 14px;
 }
 
 .heroPill {
-  padding: 8px 12px;
+  padding: 6px 11px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.1);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .heroStats {
@@ -123,44 +141,49 @@
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .heroStat {
-  padding: 12px 10px;
-  border-radius: 18px;
+  padding: 10px 8px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .heroStatValue {
   display: block;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 800;
 }
 
 .heroStatLabel {
   display: block;
-  margin-top: 4px;
-  color: rgba(241, 248, 238, 0.78);
-  font-size: 0.72rem;
+  margin-top: 2px;
+  color: rgba(238, 250, 234, 0.72);
+  font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+
+/* ==============================
+   Section Header
+   ============================== */
 
 .sectionHeader {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 12px;
-  margin: 18px 0 16px;
+  gap: 10px;
+  margin: 16px 0 12px;
 }
 
 .sectionEyebrow {
   display: inline-block;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   color: var(--secondary-light);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -168,191 +191,319 @@
 
 .sectionTitle {
   font-family: 'Playfair Display', serif;
-  font-size: 1.45rem;
+  font-size: 1.3rem;
   color: #1a371f;
+  line-height: 1.25;
 }
 
 .sectionText {
-  max-width: 42ch;
-  margin-top: 4px;
+  max-width: 40ch;
+  margin-top: 3px;
   color: #5f6f65;
-  font-size: 0.84rem;
-  line-height: 1.65;
+  font-size: 0.82rem;
+  line-height: 1.6;
 }
 
 .sectionBadge {
   flex-shrink: 0;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: 999px;
   background: rgba(27, 94, 32, 0.08);
   color: var(--secondary);
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   font-weight: 700;
 }
 
-@media (min-width: 768px) {
-  .container {
-    max-width: 720px;
-    padding: 0 24px;
-  }
-}
+/* ==============================
+   Menu Grid â€” single col mobile, 2-col tablet, 3-col desktop
+   ============================== */
 
 .grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-@media (max-width: 380px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+.gridItem {
+  animation: fadeIn 0.35s ease forwards;
+  opacity: 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .grid {
-    grid-template-columns: repeat(3, 1fr);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 18px;
   }
 }
 
-.gridItem {
-  animation: fadeIn 0.4s ease forwards;
-  opacity: 0;
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
 }
+
+/* ==============================
+   Loading Skeletons
+   ============================== */
 
 .loadingGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
+@media (min-width: 640px) {
+  .loadingGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .loadingGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Horizontal skeleton on mobile */
 .skeleton {
-  background: rgba(255, 255, 255, 0.72);
-  border-radius: 22px;
+  display: flex;
+  flex-direction: row;
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: 16px;
   overflow: hidden;
-  border: 1px solid rgba(46, 125, 50, 0.1);
-  box-shadow: 0 18px 40px rgba(18, 63, 26, 0.06);
+  border: 1px solid rgba(46, 125, 50, 0.07);
+  height: 128px;
 }
 
 .skeletonImage {
-  width: 100%;
-  height: 180px;
-  background: linear-gradient(90deg, rgba(223, 232, 223, 0.7) 25%, rgba(204, 223, 205, 0.95) 50%, rgba(223, 232, 223, 0.7) 75%);
+  width: 114px;
+  flex-shrink: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #deeede 25%, #c8ddc8 50%, #deeede 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: shimmer 1.4s infinite;
 }
 
 .skeletonContent {
-  padding: 16px;
+  flex: 1;
+  padding: 14px 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 .skeletonLine {
-  height: 12px;
+  height: 11px;
   border-radius: 6px;
-  background: linear-gradient(90deg, rgba(223, 232, 223, 0.7) 25%, rgba(204, 223, 205, 0.95) 50%, rgba(223, 232, 223, 0.7) 75%);
+  background: linear-gradient(90deg, #deeede 25%, #c8ddc8 50%, #deeede 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: shimmer 1.4s infinite;
 }
+
+/* Vertical skeleton on tablet+ */
+@media (min-width: 640px) {
+  .skeleton {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .skeletonImage {
+    width: 100%;
+    height: 176px;
+  }
+
+  .skeletonContent {
+    padding: 16px;
+  }
+}
+
+/* ==============================
+   Empty State
+   ============================== */
 
 .emptyState {
   text-align: center;
-  padding: 64px 24px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.7);
+  padding: 56px 24px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(46, 125, 50, 0.08);
-  box-shadow: 0 18px 42px rgba(18, 63, 26, 0.06);
+  box-shadow: 0 16px 40px rgba(18, 63, 26, 0.05);
 }
 
 .emptyState p {
   font-family: 'Playfair Display', serif;
-  font-size: 1.45rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #19361e;
   margin-bottom: 6px;
 }
 
 .emptyState span {
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   color: #5f6f65;
 }
 
+/* ==============================
+   Cart FAB â€” wide bar on mobile, floating pill on desktop
+   ============================== */
+
 .cartFab {
   position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  transform: none;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 15px 30px;
+  justify-content: space-between;
+  padding: 14px 18px;
+  padding-bottom: max(14px, calc(14px + env(safe-area-inset-bottom, 0px)));
   background: var(--secondary-gradient);
   color: white;
   border: none;
-  border-radius: var(--radius-full);
+  border-radius: 16px;
   font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 700;
   cursor: pointer;
-  box-shadow: var(--shadow-xl), var(--shadow-green);
-  transition: all var(--transition-normal);
+  box-shadow: 0 8px 28px rgba(27, 94, 32, 0.38), 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: filter var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
   z-index: 50;
-  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.cartFab:hover {
-  transform: translateX(-50%) translateY(-3px);
-  box-shadow: 0 16px 48px rgba(0,0,0,0.2), 0 6px 24px rgba(27, 94, 32, 0.35);
+  animation: slideUpFab 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  touch-action: manipulation;
 }
 
 .cartFab:active {
-  transform: translateX(-50%) scale(0.95);
+  filter: brightness(0.9);
+  transform: scale(0.98);
 }
 
-.cartBadge {
+.cartInfo {
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 6px;
-  background: white;
-  color: var(--secondary);
-  font-size: 0.72rem;
-  font-weight: 800;
-  border-radius: var(--radius-full);
+  gap: 9px;
+}
+
+.cartCount {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.cartDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
 }
 
 .cartTotal {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 800;
+  line-height: 1.2;
 }
 
-@media (max-width: 520px) {
-  .heroStats {
-    grid-template-columns: 1fr;
+.cartCta {
+  font-size: 0.65rem;
+  font-weight: 600;
+  opacity: 0.76;
+  letter-spacing: 0.04em;
+}
+
+/* Desktop: compact floating pill */
+@media (min-width: 640px) {
+  .cartFab {
+    bottom: 24px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    border-radius: var(--radius-full);
+    padding: 14px 28px;
+    width: auto;
+    justify-content: center;
+    gap: 12px;
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
+  .cartFab:hover {
+    filter: none;
+    transform: translateX(-50%) translateY(-3px);
+    box-shadow: 0 14px 40px rgba(27, 94, 32, 0.42), 0 4px 12px rgba(0, 0, 0, 0.14);
+  }
+
+  .cartFab:active {
+    filter: none;
+    transform: translateX(-50%) scale(0.96);
+  }
+
+  .cartDetails {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cartCta {
+    display: none;
+  }
+}
+
+/* ==============================
+   Section responsiveness
+   ============================== */
+
+@media (min-width: 640px) {
   .sectionHeader {
-    flex-direction: column;
-    align-items: flex-start;
+    margin: 20px 0 16px;
+  }
+
+  .heroCard {
+    padding: 22px 24px 20px;
   }
 }
+
+/* ==============================
+   Keyframes
+   ============================== */
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: translateX(-50%) scale(0.8); }
-  to { opacity: 1; transform: translateX(-50%) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes slideUpFab {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

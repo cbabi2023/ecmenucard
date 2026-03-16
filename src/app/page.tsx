@@ -184,9 +184,16 @@ export default function CustomerPage() {
 
       {totalCartItems > 0 && (
         <button className={styles.cartFab} onClick={() => setCartOpen(true)}>
-          <FiShoppingCart size={22} />
-          <span className={styles.cartBadge}>{totalCartItems}</span>
-          <span className={styles.cartTotal}>₹{totalCartValue.toFixed(0)}</span>
+          <span className={styles.cartInfo}>
+            <FiShoppingCart size={20} />
+            <span className={styles.cartCount}>
+              {totalCartItems} {totalCartItems === 1 ? 'item' : 'items'}
+            </span>
+          </span>
+          <span className={styles.cartDetails}>
+            <span className={styles.cartTotal}>₹{totalCartValue.toFixed(0)}</span>
+            <span className={styles.cartCta}>View order</span>
+          </span>
         </button>
       )}
 

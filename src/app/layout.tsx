@@ -23,13 +23,6 @@ export default function RootLayout({
       <body>
         <div className="appShell">
           <main className="appContent">{children}</main>
-          <footer className="creatorFooter" aria-label="Creator attribution">
-            <span className="creatorMark" aria-hidden="true" />
-            <span>Created by </span>
-            <a href="https://abijithcb.com" target="_blank" rel="noreferrer" className="creatorLink">
-              abijithcb.com
-            </a>
-          </footer>
         </div>
       </body>
     </html>

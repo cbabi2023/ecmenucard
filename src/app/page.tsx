@@ -212,6 +212,14 @@ export default function CustomerPage() {
         </div>
       </main>
 
+      <footer className="creatorFooter" aria-label="Creator attribution">
+        <span className="creatorMark" aria-hidden="true" />
+        <span>Created by </span>
+        <a href="https://abijithcb.com" target="_blank" rel="noreferrer" className="creatorLink">
+          abijithcb.com
+        </a>
+      </footer>
+
       {totalCartItems > 0 && (
         <button className={styles.cartFab} onClick={() => setCartOpen(true)}>
           <span className={styles.cartInfo}>

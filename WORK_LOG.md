@@ -1,5 +1,11 @@
 # WORK_LOG
 
+## 2026-03-16 19:34:41 +05:30
+Summary: Added drag-and-drop ordering for admin menu items list (card can be dragged from anywhere on the container) with persistent `sort_order` updates in Supabase; works in both All Items and category-filtered views. Also improved customer-side price emphasis by styling a clear rupee price pill with separated `₹` symbol and amount.
+Files changed: src/app/admin/menu-items/page.tsx, src/app/admin/menu-items/menuitems.module.css, src/app/components/MenuCard.tsx, src/app/components/MenuCard.module.css, WORK_LOG.md
+Verification: Ran `npm run lint` and `npm run build`; both passed. Drag state and drop target visuals added; reorder saves changed sort orders to DB; customer menu card price styling displays stronger rupee highlight.
+Issues: none
+
 ## 2026-03-16 19:31:27 +05:30
 Summary: Verified and resolved build-quality request by running full lint and production build checks; no remaining errors found.
 Files changed: WORK_LOG.md

@@ -134,6 +134,9 @@ function MenuItemsPage() {
   const [saving, setSaving] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [draggingItemId, setDraggingItemId] = useState<string | null>(null);
+  const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
+  const [reordering, setReordering] = useState(false);
 
   // Image upload state
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -280,6 +283,87 @@ function MenuItemsPage() {
     await refreshData();
   };
 
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, itemId: string) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', itemId);
+    setDraggingItemId(itemId);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, itemId: string) => {
+    e.preventDefault();
+    if (dragOverItemId !== itemId) {
+      setDragOverItemId(itemId);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggingItemId(null);
+    setDragOverItemId(null);
+  };
+
+  const handleDrop = async (targetItemId: string) => {
+    if (!draggingItemId || draggingItemId === targetItemId || reordering) {
+      handleDragEnd();
+      return;
+    }
+
+    setReordering(true);
+    try {
+      const activeItems = filterCategory === 'all'
+        ? items
+        : items.filter((item) => item.category_id === filterCategory);
+
+      const fromIndex = activeItems.findIndex((item) => item.id === draggingItemId);
+      const toIndex = activeItems.findIndex((item) => item.id === targetItemId);
+
+      if (fromIndex === -1 || toIndex === -1) {
+        handleDragEnd();
+        return;
+      }
+
+      const reorderedActive = [...activeItems];
+      const [movedItem] = reorderedActive.splice(fromIndex, 1);
+      reorderedActive.splice(toIndex, 0, movedItem);
+
+      let mergedItems: MenuItem[];
+      if (filterCategory === 'all') {
+        mergedItems = reorderedActive;
+      } else {
+        let categoryPointer = 0;
+        mergedItems = items.map((item) => (
+          item.category_id === filterCategory ? reorderedActive[categoryPointer++] : item
+        ));
+      }
+
+      const reindexedItems = mergedItems.map((item, index) => ({
+        ...item,
+        sort_order: index + 1,
+      }));
+
+      const previousSort = new Map(items.map((item) => [item.id, item.sort_order]));
+      const changed = reindexedItems.filter((item) => previousSort.get(item.id) !== item.sort_order);
+
+      setItems(reindexedItems);
+
+      if (changed.length > 0) {
+        const updates = await Promise.all(
+          changed.map((item) => supabase.from('menu_items').update({ sort_order: item.sort_order }).eq('id', item.id)),
+        );
+
+        const failedUpdate = updates.find((result) => result.error);
+        if (failedUpdate?.error) {
+          throw new Error(failedUpdate.error.message);
+        }
+      }
+    } catch (err) {
+      console.error('Error reordering items:', err);
+      await refreshData();
+    } finally {
+      setReordering(false);
+      handleDragEnd();
+    }
+  };
+
   const filteredItems = filterCategory === 'all'
     ? items
     : items.filter((item) => item.category_id === filterCategory);
@@ -312,6 +396,9 @@ function MenuItemsPage() {
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
+            <p className={styles.reorderHint}>
+              {reordering ? 'Saving item order...' : 'Drag any item card to reorder. Works in All Items and category filter views.'}
+            </p>
           </div>
 
           {/* Form Modal */}
@@ -483,8 +570,13 @@ function MenuItemsPage() {
                 {paginatedItems.map((item, index) => (
                   <div
                     key={item.id}
-                    className={styles.listItem}
+                    className={`${styles.listItem} ${draggingItemId === item.id ? styles.listItemDragging : ''} ${dragOverItemId === item.id ? styles.listItemDragOver : ''}`}
                     style={{ animationDelay: `${index * 0.04}s` }}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, item.id)}
+                    onDragOver={(e) => handleDragOver(e, item.id)}
+                    onDrop={() => void handleDrop(item.id)}
+                    onDragEnd={handleDragEnd}
                   >
                     <div className={styles.itemLeft}>
                       {item.image_url ? (
@@ -536,7 +628,7 @@ function MenuItemsPage() {
                   <button
                     className={styles.pageBtn}
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
+                    disabled={currentPage === 1 || reordering}
                   >
                     ‹
                   </button>
@@ -546,7 +638,7 @@ function MenuItemsPage() {
                   <button
                     className={styles.pageBtn}
                     onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
+                    disabled={currentPage === totalPages || reordering}
                   >
                     ›
                   </button>

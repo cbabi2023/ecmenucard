@@ -60,7 +60,10 @@ export default function MenuCard({ item, cartItem, onAdd, onIncrement, onDecreme
           <p className={styles.description}>{item.description}</p>
         )}
         <div className={styles.priceRow}>
-          <span className={styles.price}>₹{Number(item.price).toFixed(0)}</span>
+          <span className={styles.price}>
+            <span className={styles.priceCurrency}>₹</span>
+            <span className={styles.priceAmount}>{Number(item.price).toFixed(0)}</span>
+          </span>
           {item.is_available && (
             <div className={styles.actions}>
               {quantity > 0 ? (

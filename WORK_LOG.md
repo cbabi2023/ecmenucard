@@ -1,5 +1,11 @@
 # WORK_LOG
 
+## 2026-03-16 19:40:57 +05:30
+Summary: Fixed MenuCard image container height to be permanent/fixed so card size never changes based on uploaded image dimensions.
+Files changed: src/app/components/MenuCard.module.css
+Verification: Added `height: 126px` to mobile `.imageBox` and changed desktop `.imageFallback` to `min-height: unset`; image uses `object-fit: cover` so it fills the fixed box. Ran npm run lint and npm run build; both passed. Pushed commit 37b7452.
+Issues: none
+
 ## 2026-03-16 19:37:23 +05:30
 Summary: Increased pagination limit to show up to 100 items per page in both admin menu items and customer menu pages.
 Files changed: src/app/admin/menu-items/page.tsx, src/app/page.tsx, WORK_LOG.md

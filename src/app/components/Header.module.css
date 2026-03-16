@@ -1,0 +1,84 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 14px 16px;
+}
+
+@media (min-width: 768px) {
+  .headerInner {
+    max-width: 720px;
+    padding: 16px 24px;
+  }
+}
+
+.title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--secondary);
+  text-align: center;
+  flex: 1;
+}
+
+.logoArea {
+  width: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.logoIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--secondary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.backBtn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--secondary);
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.backBtn:hover {
+  background: var(--secondary-glow);
+}
+
+.adminBtn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.adminBtn:hover {
+  color: var(--secondary);
+  background: var(--secondary-glow);
+}

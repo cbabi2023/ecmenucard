@@ -1,0 +1,59 @@
+.wrapper {
+  position: sticky;
+  top: 63px;
+  z-index: 90;
+  background: rgba(248, 250, 248, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.scrollContainer {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0 16px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .scrollContainer {
+    max-width: 720px;
+    padding: 0 24px;
+  }
+}
+
+.tab {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.tab:hover {
+  border-color: var(--secondary-lighter);
+  color: var(--secondary);
+}
+
+.tab.active {
+  background: var(--secondary-gradient);
+  color: white;
+  border-color: var(--secondary);
+  box-shadow: var(--shadow-green);
+}

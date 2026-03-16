@@ -104,14 +104,6 @@ export default function CustomerPage() {
             <div className={styles.heroCard}>
               <span className={styles.heroKicker}>EC Fresh Point</span>
               <h2 className={styles.heroTitle}>Fresh-crafted flavors with a premium menu experience.</h2>
-              <p className={styles.heroText}>
-                Explore elegant daily picks, seasonal specialties, and WhatsApp ordering designed to feel effortless.
-              </p>
-              <div className={styles.heroPills}>
-                <span className={styles.heroPill}>Freshly prepared</span>
-                <span className={styles.heroPill}>Fast WhatsApp ordering</span>
-                <span className={styles.heroPill}>Curated every day</span>
-              </div>
               <div className={styles.heroStats}>
                 <div className={styles.heroStat}>
                   <span className={styles.heroStatValue}>{categories.length}</span>

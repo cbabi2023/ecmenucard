@@ -63,6 +63,47 @@ body {
   min-height: 100dvh;
 }
 
+.appShell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.appContent {
+  flex: 1;
+}
+
+.creatorFooter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border-light);
+  background: #ffffff;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+}
+
+.creatorMark {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #7cb342 0%, #2e7d32 45%, #1b5e20 100%);
+  box-shadow: 0 0 0 1px rgba(27, 94, 32, 0.2);
+}
+
+.creatorLink {
+  color: var(--secondary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.creatorLink:hover {
+  text-decoration: underline;
+}
+
 /* ===== Typography ===== */
 h1, h2, h3, h4, h5, h6 {
   line-height: 1.3;

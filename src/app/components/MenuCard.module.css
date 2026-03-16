@@ -37,6 +37,24 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: opacity 0.3s ease;
+}
+
+.imgLoading {
+  opacity: 0;
+}
+
+.imgLoaded {
+  opacity: 1;
+}
+
+.imgSkeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #e8f5e9 25%, #c8e6c9 50%, #e8f5e9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  z-index: 1;
 }
 
 .imageFallback {
@@ -289,4 +307,9 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }

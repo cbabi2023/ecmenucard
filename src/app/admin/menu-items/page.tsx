@@ -1,11 +1,12 @@
 'use client';
-
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase, Category, MenuItem } from '@/lib/supabase';
 import Header from '../../components/Header';
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave, FiUpload, FiImage } from 'react-icons/fi';
 import styles from './menuitems.module.css';
+
+const PAGE_SIZE = 10;
 
 const emptyForm = {
   name: '',
@@ -17,6 +18,45 @@ const emptyForm = {
   is_available: true,
   sort_order: 0,
 };
+
+async function compressImage(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      const MAX_DIM = 800;
+      let { width, height } = img;
+      if (width > MAX_DIM || height > MAX_DIM) {
+        if (width > height) {
+          height = Math.round((height * MAX_DIM) / width);
+          width = MAX_DIM;
+        } else {
+          width = Math.round((width * MAX_DIM) / height);
+          height = MAX_DIM;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, width, height);
+      URL.revokeObjectURL(objectUrl);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Image compression failed'));
+        },
+        'image/jpeg',
+        0.7,
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Failed to load image'));
+    };
+    img.src = objectUrl;
+  });
+}
 
 export default function MenuItemsPageWrapper() {
   return (
@@ -37,6 +77,13 @@ function MenuItemsPage() {
   const [formData, setFormData] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Image upload state
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const auth = localStorage.getItem('admin_auth');
@@ -83,6 +130,9 @@ function MenuItemsPage() {
     setFormData(emptyForm);
     setEditingId(null);
     setShowForm(false);
+    setImagePreview(null);
+    setUploadError(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleEdit = (item: MenuItem) => {
@@ -97,7 +147,40 @@ function MenuItemsPage() {
       sort_order: item.sort_order,
     });
     setEditingId(item.id);
+    setImagePreview(item.image_url || null);
+    setUploadError(null);
     setShowForm(true);
+  };
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('Image must be 5 MB or smaller.');
+      e.target.value = '';
+      return;
+    }
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const compressed = await compressImage(file);
+      const path = `items/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+      const { error: storageError } = await supabase.storage
+        .from('menu-images')
+        .upload(path, compressed, { contentType: 'image/jpeg', upsert: false });
+      if (storageError) {
+        setUploadError('Upload failed: ' + storageError.message);
+        return;
+      }
+      const { data: urlData } = supabase.storage.from('menu-images').getPublicUrl(path);
+      setFormData((prev) => ({ ...prev, image_url: urlData.publicUrl }));
+      setImagePreview(urlData.publicUrl);
+    } catch (err) {
+      setUploadError('Image processing failed. Please try another image.');
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -139,6 +222,9 @@ function MenuItemsPage() {
     ? items
     : items.filter((item) => item.category_id === filterCategory);
 
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
+  const paginatedItems = filteredItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   return (
     <div className={styles.page}>
       <Header title="Menu Items" showBack />
@@ -157,7 +243,7 @@ function MenuItemsPage() {
             <select
               className={styles.filterSelect}
               value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
+              onChange={(e) => { setFilterCategory(e.target.value); setCurrentPage(1); }}
             >
               <option value="all">All Categories</option>
               {categories.map((cat) => (
@@ -236,13 +322,52 @@ function MenuItemsPage() {
                     </select>
                   </div>
                   <div className={styles.inputGroup}>
-                    <label>Image URL (optional)</label>
-                    <input
-                      className={styles.input}
-                      placeholder="https://example.com/image.jpg"
-                      value={formData.image_url}
-                      onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    />
+                    <label>Item Image (optional)</label>
+                    <div className={styles.uploadArea}>
+                      {imagePreview ? (
+                        <div className={styles.previewWrap}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={imagePreview} alt="Preview" className={styles.previewImg} />
+                          <button
+                            type="button"
+                            className={styles.removeImgBtn}
+                            onClick={() => {
+                              setImagePreview(null);
+                              setFormData((prev) => ({ ...prev, image_url: '' }));
+                              if (fileInputRef.current) fileInputRef.current.value = '';
+                            }}
+                          >
+                            <FiX size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className={styles.uploadBtn}
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={uploading}
+                        >
+                          {uploading ? (
+                            <span className={styles.uploadingText}>Compressing & uploading…</span>
+                          ) : (
+                            <>
+                              <FiUpload size={18} />
+                              <span>Upload Image</span>
+                              <span className={styles.uploadHint}>Max 5 MB · JPEG / PNG / WebP</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className={styles.fileInput}
+                        onChange={handleImageSelect}
+                        disabled={uploading}
+                      />
+                    </div>
+                    {uploadError && <span className={styles.uploadError}>{uploadError}</span>}
                   </div>
                   <div className={styles.row}>
                     <div className={styles.inputGroup}>
@@ -266,7 +391,7 @@ function MenuItemsPage() {
                       </label>
                     </div>
                   </div>
-                  <button type="submit" className={styles.saveBtn} disabled={saving}>
+                  <button type="submit" className={styles.saveBtn} disabled={saving || uploading}>
                     <FiSave size={16} /> {saving ? 'Saving...' : editingId ? 'Update' : 'Save'}
                   </button>
                 </form>
@@ -291,54 +416,81 @@ function MenuItemsPage() {
               <span>Add your first menu item to get started</span>
             </div>
           ) : (
-            <div className={styles.list}>
-              {filteredItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={styles.listItem}
-                  style={{ animationDelay: `${index * 0.04}s` }}
-                >
-                  <div className={styles.itemLeft}>
-                    {item.image_url && (
-                      <>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={item.image_url} alt={item.name} className={styles.itemImage} />
-                      </>
-                    )}
-                    <div className={styles.itemInfo}>
-                      <div className={styles.itemTop}>
-                        <h4 className={styles.itemName}>{item.name}</h4>
-                        <span className={`badge ${item.is_available ? 'badge-green' : 'badge-red'}`}>
-                          {item.is_available ? 'Available' : 'Unavailable'}
-                        </span>
-                      </div>
-                      {item.description && <p className={styles.itemDesc}>{item.description}</p>}
-                      <div className={styles.itemMeta}>
-                        <span className={styles.itemPrice}>₹{Number(item.price).toFixed(0)}</span>
-                        <span className={styles.itemQty}>{item.quantity}</span>
-                        {item.category && <span className={styles.itemCat}>{(item.category as Category).name}</span>}
+            <>
+              <div className={styles.list}>
+                {paginatedItems.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className={styles.listItem}
+                    style={{ animationDelay: `${index * 0.04}s` }}
+                  >
+                    <div className={styles.itemLeft}>
+                      {item.image_url ? (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={item.image_url} alt={item.name} className={styles.itemImage} />
+                        </>
+                      ) : (
+                        <div className={styles.itemImageFallback}>
+                          <FiImage size={18} />
+                        </div>
+                      )}
+                      <div className={styles.itemInfo}>
+                        <div className={styles.itemTop}>
+                          <h4 className={styles.itemName}>{item.name}</h4>
+                          <span className={`badge ${item.is_available ? 'badge-green' : 'badge-red'}`}>
+                            {item.is_available ? 'Available' : 'Unavailable'}
+                          </span>
+                        </div>
+                        {item.description && <p className={styles.itemDesc}>{item.description}</p>}
+                        <div className={styles.itemMeta}>
+                          <span className={styles.itemPrice}>₹{Number(item.price).toFixed(0)}</span>
+                          <span className={styles.itemQty}>{item.quantity}</span>
+                          {item.category && <span className={styles.itemCat}>{(item.category as Category).name}</span>}
+                        </div>
                       </div>
                     </div>
+                    <div className={styles.itemActions}>
+                      <label className="toggle" title="Toggle availability">
+                        <input
+                          type="checkbox"
+                          checked={item.is_available}
+                          onChange={() => toggleAvailability(item.id, item.is_available)}
+                        />
+                        <span className="toggle-slider"></span>
+                      </label>
+                      <button className={styles.editBtn} onClick={() => handleEdit(item)} title="Edit">
+                        <FiEdit2 size={15} />
+                      </button>
+                      <button className={styles.deleteBtn} onClick={() => handleDelete(item.id)} title="Delete">
+                        <FiTrash2 size={15} />
+                      </button>
+                    </div>
                   </div>
-                  <div className={styles.itemActions}>
-                    <label className="toggle" title="Toggle availability">
-                      <input
-                        type="checkbox"
-                        checked={item.is_available}
-                        onChange={() => toggleAvailability(item.id, item.is_available)}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                    <button className={styles.editBtn} onClick={() => handleEdit(item)} title="Edit">
-                      <FiEdit2 size={15} />
-                    </button>
-                    <button className={styles.deleteBtn} onClick={() => handleDelete(item.id)} title="Delete">
-                      <FiTrash2 size={15} />
-                    </button>
-                  </div>
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className={styles.pagination}>
+                  <button
+                    className={styles.pageBtn}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    ‹
+                  </button>
+                  <span className={styles.pageInfo}>
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    className={styles.pageBtn}
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    ›
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </main>

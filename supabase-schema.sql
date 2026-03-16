@@ -55,3 +55,37 @@ CREATE INDEX idx_menu_items_available ON menu_items(is_available);
 CREATE INDEX idx_categories_active ON categories(is_active);
 CREATE INDEX idx_categories_sort ON categories(sort_order);
 CREATE INDEX idx_menu_items_sort ON menu_items(sort_order);
+
+-- =============================================
+-- Storage bucket for menu item images
+-- Run AFTER the tables above.
+-- =============================================
+
+-- Create the public bucket (skip if it already exists)
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'menu-images',
+  'menu-images',
+  true,
+  5242880,  -- 5 MB hard limit at storage layer
+  ARRAY['image/jpeg','image/png','image/webp','image/gif']
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- Allow anyone to read images (public CDN)
+CREATE POLICY "Public read access on menu-images"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'menu-images');
+
+-- Allow insert / update / delete via anon key (admin panel uses anon key)
+CREATE POLICY "Anon upload to menu-images"
+  ON storage.objects FOR INSERT
+  WITH CHECK (bucket_id = 'menu-images');
+
+CREATE POLICY "Anon update menu-images"
+  ON storage.objects FOR UPDATE
+  USING (bucket_id = 'menu-images');
+
+CREATE POLICY "Anon delete menu-images"
+  ON storage.objects FOR DELETE
+  USING (bucket_id = 'menu-images');

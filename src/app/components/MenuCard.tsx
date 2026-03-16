@@ -2,6 +2,7 @@
 
 import { MenuItem, CartItem } from '@/lib/supabase';
 import { FiPlus, FiMinus } from 'react-icons/fi';
+import { useState } from 'react';
 import styles from './MenuCard.module.css';
 
 interface MenuCardProps {
@@ -15,6 +16,7 @@ interface MenuCardProps {
 export default function MenuCard({ item, cartItem, onAdd, onIncrement, onDecrement }: MenuCardProps) {
   const quantity = cartItem?.cart_quantity || 0;
   const categoryName = item.category?.name ?? 'Fresh Pick';
+  const [imgLoaded, setImgLoaded] = useState(false);
   const fallbackInitials = item.name
     .split(' ')
     .slice(0, 2)
@@ -27,8 +29,14 @@ export default function MenuCard({ item, cartItem, onAdd, onIncrement, onDecreme
       <div className={styles.imageBox}>
         {item.image_url ? (
           <>
+            {!imgLoaded && <div className={styles.imgSkeleton} />}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.image_url} alt={item.name} className={styles.image} />
+            <img
+              src={item.image_url}
+              alt={item.name}
+              className={`${styles.image} ${imgLoaded ? styles.imgLoaded : styles.imgLoading}`}
+              onLoad={() => setImgLoaded(true)}
+            />
           </>
         ) : (
           <div className={styles.imageFallback}>

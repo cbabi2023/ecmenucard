@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
+const ITEMS_PER_PAGE = 12;
+
 import { supabase, Category, MenuItem, CartItem } from '@/lib/supabase';
 import Header from './components/Header';
 import CategoryTabs from './components/CategoryTabs';
@@ -18,6 +21,7 @@ export default function CustomerPage() {
   const [cartOpen, setCartOpen] = useState(false);
   const [orderFormOpen, setOrderFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     let isMounted = true;
@@ -55,6 +59,12 @@ export default function CustomerPage() {
     ? menuItems.filter((item) => item.category_id === activeCategory)
     : menuItems;
 
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
+
   const addToCart = (item: MenuItem) => {
     setCart((prev) => {
       const existing = prev.find((c) => c.id === item.id);
@@ -86,6 +96,11 @@ export default function CustomerPage() {
   const activeCategoryName = activeCategory
     ? categories.find((category) => category.id === activeCategory)?.name ?? 'Curated Collection'
     : 'Chef Curated Fresh Picks';
+
+  const handleCategorySelect = (catId: string | null) => {
+    setActiveCategory(catId);
+    setCurrentPage(1);
+  };
 
   const handleOrderPlaced = () => {
     setCart([]);
@@ -124,7 +139,7 @@ export default function CustomerPage() {
           <CategoryTabs
             categories={categories}
             activeCategory={activeCategory}
-            onSelect={setActiveCategory}
+            onSelect={handleCategorySelect}
           />
 
           <div className={styles.sectionHeader}>
@@ -157,19 +172,42 @@ export default function CustomerPage() {
               <span>We are refreshing this collection. Check back shortly for the next drop.</span>
             </div>
           ) : (
-            <div className={styles.grid}>
-              {filteredItems.map((item, index) => (
-                <div key={item.id} style={{ animationDelay: `${index * 0.05}s` }} className={styles.gridItem}>
-                  <MenuCard
-                    item={item}
-                    cartItem={cart.find((c) => c.id === item.id)}
-                    onAdd={addToCart}
-                    onIncrement={incrementCart}
-                    onDecrement={decrementCart}
-                  />
+            <>
+              <div className={styles.grid}>
+                {paginatedItems.map((item, index) => (
+                  <div key={item.id} style={{ animationDelay: `${index * 0.05}s` }} className={styles.gridItem}>
+                    <MenuCard
+                      item={item}
+                      cartItem={cart.find((c) => c.id === item.id)}
+                      onAdd={addToCart}
+                      onIncrement={incrementCart}
+                      onDecrement={decrementCart}
+                    />
+                  </div>
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className={styles.pagination}>
+                  <button
+                    className={styles.pageBtn}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    ‹
+                  </button>
+                  <span className={styles.pageInfo}>
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    className={styles.pageBtn}
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    ›
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </main>

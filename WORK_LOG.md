@@ -1,5 +1,11 @@
 # WORK_LOG
 
+## 2026-03-16 19:42:55 +05:30
+Summary: Moved "Created by abijithcb.com" footer from global layout (all pages) to customer-facing page only; admin pages no longer show the footer.
+Files changed: src/app/layout.tsx, src/app/page.tsx
+Verification: Removed footer from layout.tsx appShell, added inline footer JSX in page.tsx after </main>. Ran lint and build; both passed. Pushed commit bba422c.
+Issues: none
+
 ## 2026-03-16 19:40:57 +05:30
 Summary: Fixed MenuCard image container height to be permanent/fixed so card size never changes based on uploaded image dimensions.
 Files changed: src/app/components/MenuCard.module.css

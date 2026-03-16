@@ -1,5 +1,11 @@
 # WORK_LOG
 
+## 2026-03-16 — Image upload, compression, loading skeletons, pagination
+Summary: Added image upload to admin menu-items form (replaces image URL text field). Images are compressed client-side using Canvas API (max 800px, JPEG quality 0.70, targeting ~10% of original size). File size capped at 5 MB before compression. Images upload to Supabase Storage bucket `menu-images`; public URL stored in `image_url`. Added upload preview with remove button. Disabled Save while uploading. Added image loading skeleton shimmer to MenuCard (green shimmer while image loads, fade-in on load). Added pagination to both admin list (10 items/page) and customer menu page (12 items/page); customer page resets to page 1 on category change. Added Supabase storage bucket setup SQL to `supabase-schema.sql`.
+Files changed: src/app/admin/menu-items/page.tsx, src/app/admin/menu-items/menuitems.module.css, src/app/components/MenuCard.tsx, src/app/components/MenuCard.module.css, src/app/page.tsx, src/app/page.module.css, supabase-schema.sql
+Verification: npm run lint → 0 problems. npm run build → all 6 routes compiled successfully. Committed as ac3962e and pushed to main.
+Issues: Two lint-phase bugs fixed — duplicate react-icons import line (leftover from patch), and adjacent JSX elements in ternary without Fragment wrapper on customer page.
+
 ## 2026-03-17 — Remove hero description text and pills from hero card
 Summary: Removed the `<p className={styles.heroText}>` description paragraph and `<div className={styles.heroPills}>` (3 pill spans: "Freshly prepared", "Fast WhatsApp ordering", "Curated every day") from the customer landing page hero card. Hero section now flows directly from heroTitle to heroStats.
 Files changed: src/app/page.tsx

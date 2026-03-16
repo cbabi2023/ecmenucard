@@ -14,26 +14,58 @@ interface MenuCardProps {
 
 export default function MenuCard({ item, cartItem, onAdd, onIncrement, onDecrement }: MenuCardProps) {
   const quantity = cartItem?.cart_quantity || 0;
+  const categoryName = item.category?.name ?? 'Fresh Pick';
+  const fallbackInitials = item.name
+    .split(' ')
+    .slice(0, 2)
+    .map((part) => part.charAt(0))
+    .join('')
+    .toUpperCase();
 
   return (
     <div className={styles.card}>
-      {item.image_url && (
-        <div className={styles.imageWrapper}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={item.image_url} alt={item.name} className={styles.image} />
-          {!item.is_available && <div className={styles.unavailableBadge}>Unavailable</div>}
+      <div className={styles.imageWrapper}>
+        {item.image_url ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={item.image_url} alt={item.name} className={styles.image} />
+          </>
+        ) : (
+          <div className={styles.imageFallback}>
+            <span className={styles.fallbackInitials}>{fallbackInitials}</span>
+            <span className={styles.fallbackLabel}>Signature Selection</span>
+          </div>
+        )}
+        <div className={styles.imageShade} />
+        <div className={styles.cardBadges}>
+          <span className={styles.categoryBadge}>{categoryName}</span>
+          {item.is_available ? (
+            <span className={styles.freshBadge}>Fresh Today</span>
+          ) : (
+            <div className={styles.unavailableBadge}>Unavailable</div>
+          )}
         </div>
-      )}
+      </div>
       <div className={styles.content}>
         <div className={styles.top}>
           <div className={styles.info}>
-            <h3 className={styles.name}>{item.name}</h3>
+            <div className={styles.titleRow}>
+              <h3 className={styles.name}>{item.name}</h3>
+              <span className={styles.priceTag}>₹{Number(item.price).toFixed(0)}</span>
+            </div>
             {item.description && <p className={styles.description}>{item.description}</p>}
-            <span className={styles.quantity}>{item.quantity}</span>
+            <div className={styles.metaRow}>
+              <span className={styles.quantity}>{item.quantity}</span>
+              <span className={styles.dot} />
+              <span className={styles.signatureNote}>Chef-styled serving</span>
+            </div>
           </div>
         </div>
         <div className={styles.bottom}>
-          <span className={styles.price}>₹{Number(item.price).toFixed(0)}</span>
+          <div className={styles.bottomCopy}>
+            <span className={styles.bottomLabel}>Add to order</span>
+            <span className={styles.price}>Premium fresh prep</span>
+          </div>
           {item.is_available && (
             <div className={styles.actions}>
               {quantity > 0 ? (

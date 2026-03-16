@@ -10,7 +10,7 @@ interface HeaderProps {
   showBack?: boolean;
 }
 
-export default function Header({ title = 'EC Menu Card', showBack = false }: HeaderProps) {
+export default function Header({ title = 'EC Fresh Point', showBack = false }: HeaderProps) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin');
 

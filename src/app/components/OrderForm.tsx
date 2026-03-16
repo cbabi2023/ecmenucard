@@ -29,7 +29,7 @@ export default function OrderForm({ isOpen, items, onClose, onOrderPlaced }: Ord
     setSubmitting(true);
 
     // Build WhatsApp message
-    let message = `🛒 *New Order from EC Menu Card*\n\n`;
+    let message = `🛒 *New Order from EC Fresh Point*\n\n`;
     message += `👤 *Customer:* ${name.trim()}\n`;
     message += `📱 *Phone:* ${phone.trim()}\n\n`;
     message += `📋 *Order Details:*\n`;

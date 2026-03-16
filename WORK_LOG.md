@@ -29,3 +29,9 @@ Summary: Removed the customer-facing settings icon from the menu card header and
 Files changed: src/app/components/Header.tsx, src/app/page.tsx, src/app/admin/page.tsx, src/app/admin/admin.module.css, WORK_LOG.md
 Verification: `npm run lint` completed with no problems, `npm run build` completed successfully, and workspace diagnostics reported no errors in the updated files.
 Issues: none
+
+## 2026-03-16 18:48:00 +05:30
+Summary: Rebranded the customer-facing experience to EC Fresh Point and redesigned the user-side landing and menu cards with a more premium, dynamic visual treatment.
+Files changed: src/app/layout.tsx, src/app/components/Header.tsx, src/app/components/MenuCard.tsx, src/app/components/MenuCard.module.css, src/app/components/OrderForm.tsx, src/app/page.tsx, src/app/page.module.css, src/app/globals.css, WORK_LOG.md
+Verification: `npm run lint` completed with no problems, `npm run build` completed successfully, and the public app build completed with the updated branding and customer-side visual refresh.
+Issues: none

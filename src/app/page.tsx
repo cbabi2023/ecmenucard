@@ -82,6 +82,10 @@ export default function CustomerPage() {
   };
 
   const totalCartItems = cart.reduce((sum, item) => sum + item.cart_quantity, 0);
+  const totalCartValue = cart.reduce((sum, item) => sum + item.price * item.cart_quantity, 0);
+  const activeCategoryName = activeCategory
+    ? categories.find((category) => category.id === activeCategory)?.name ?? 'Curated Collection'
+    : 'Chef Curated Fresh Picks';
 
   const handleOrderPlaced = () => {
     setCart([]);
@@ -91,16 +95,57 @@ export default function CustomerPage() {
 
   return (
     <div className={styles.page}>
-      <Header title="EC Menu Card" />
-
-      <CategoryTabs
-        categories={categories}
-        activeCategory={activeCategory}
-        onSelect={setActiveCategory}
-      />
+      <Header title="EC Fresh Point" />
 
       <main className={styles.main}>
         <div className={styles.container}>
+          <section className={styles.hero}>
+            <div className={styles.heroBackdrop} />
+            <div className={styles.heroCard}>
+              <span className={styles.heroKicker}>EC Fresh Point</span>
+              <h2 className={styles.heroTitle}>Fresh-crafted flavors with a premium menu experience.</h2>
+              <p className={styles.heroText}>
+                Explore elegant daily picks, seasonal specialties, and WhatsApp ordering designed to feel effortless.
+              </p>
+              <div className={styles.heroPills}>
+                <span className={styles.heroPill}>Freshly prepared</span>
+                <span className={styles.heroPill}>Fast WhatsApp ordering</span>
+                <span className={styles.heroPill}>Curated every day</span>
+              </div>
+              <div className={styles.heroStats}>
+                <div className={styles.heroStat}>
+                  <span className={styles.heroStatValue}>{categories.length}</span>
+                  <span className={styles.heroStatLabel}>collections</span>
+                </div>
+                <div className={styles.heroStat}>
+                  <span className={styles.heroStatValue}>{menuItems.length}</span>
+                  <span className={styles.heroStatLabel}>fresh picks</span>
+                </div>
+                <div className={styles.heroStat}>
+                  <span className={styles.heroStatValue}>{totalCartItems}</span>
+                  <span className={styles.heroStatLabel}>in your cart</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <CategoryTabs
+            categories={categories}
+            activeCategory={activeCategory}
+            onSelect={setActiveCategory}
+          />
+
+          <div className={styles.sectionHeader}>
+            <div>
+              <span className={styles.sectionEyebrow}>Now Serving</span>
+              <h3 className={styles.sectionTitle}>{activeCategoryName}</h3>
+              <p className={styles.sectionText}>
+                Beautifully presented favorites chosen for freshness, flavor, and quick ordering.
+              </p>
+            </div>
+            <div className={styles.sectionBadge}>{filteredItems.length} items</div>
+          </div>
+
           {loading ? (
             <div className={styles.loadingGrid}>
               {[1, 2, 3, 4].map((i) => (
@@ -116,8 +161,8 @@ export default function CustomerPage() {
             </div>
           ) : filteredItems.length === 0 ? (
             <div className={styles.emptyState}>
-              <p>No items found</p>
-              <span>Check back soon for updates to our menu!</span>
+              <p>No fresh picks found</p>
+              <span>We are refreshing this collection. Check back shortly for the next drop.</span>
             </div>
           ) : (
             <div className={styles.grid}>
@@ -137,14 +182,11 @@ export default function CustomerPage() {
         </div>
       </main>
 
-      {/* Floating Cart Button */}
       {totalCartItems > 0 && (
         <button className={styles.cartFab} onClick={() => setCartOpen(true)}>
           <FiShoppingCart size={22} />
           <span className={styles.cartBadge}>{totalCartItems}</span>
-          <span className={styles.cartTotal}>
-            ₹{cart.reduce((sum, item) => sum + item.price * item.cart_quantity, 0).toFixed(0)}
-          </span>
+          <span className={styles.cartTotal}>₹{totalCartValue.toFixed(0)}</span>
         </button>
       )}
 

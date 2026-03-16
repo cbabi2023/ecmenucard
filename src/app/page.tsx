@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 100;
 
 import { supabase, Category, MenuItem, CartItem } from '@/lib/supabase';
 import Header from './components/Header';

@@ -6,7 +6,7 @@ import Header from '../../components/Header';
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiSave, FiUpload, FiImage } from 'react-icons/fi';
 import styles from './menuitems.module.css';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 100;
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 const TARGET_COMPRESSED_BYTES = 400 * 1024;
 const HARD_COMPRESSED_MAX_BYTES = 1024 * 1024;

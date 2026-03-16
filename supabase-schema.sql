@@ -30,31 +30,35 @@ ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE menu_items ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access for customers
+DROP POLICY IF EXISTS "Allow public read access on categories" ON categories;
 CREATE POLICY "Allow public read access on categories"
   ON categories FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Allow public read access on menu_items" ON menu_items;
 CREATE POLICY "Allow public read access on menu_items"
   ON menu_items FOR SELECT
   USING (true);
 
 -- Allow full access for authenticated/service role (admin)
+DROP POLICY IF EXISTS "Allow full access for service role on categories" ON categories;
 CREATE POLICY "Allow full access for service role on categories"
   ON categories FOR ALL
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow full access for service role on menu_items" ON menu_items;
 CREATE POLICY "Allow full access for service role on menu_items"
   ON menu_items FOR ALL
   USING (true)
   WITH CHECK (true);
 
 -- Create indexes for performance
-CREATE INDEX idx_menu_items_category ON menu_items(category_id);
-CREATE INDEX idx_menu_items_available ON menu_items(is_available);
-CREATE INDEX idx_categories_active ON categories(is_active);
-CREATE INDEX idx_categories_sort ON categories(sort_order);
-CREATE INDEX idx_menu_items_sort ON menu_items(sort_order);
+CREATE INDEX IF NOT EXISTS idx_menu_items_category ON menu_items(category_id);
+CREATE INDEX IF NOT EXISTS idx_menu_items_available ON menu_items(is_available);
+CREATE INDEX IF NOT EXISTS idx_categories_active ON categories(is_active);
+CREATE INDEX IF NOT EXISTS idx_categories_sort ON categories(sort_order);
+CREATE INDEX IF NOT EXISTS idx_menu_items_sort ON menu_items(sort_order);
 
 -- =============================================
 -- Storage bucket for menu item images
@@ -73,19 +77,23 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- Allow anyone to read images (public CDN)
+DROP POLICY IF EXISTS "Public read access on menu-images" ON storage.objects;
 CREATE POLICY "Public read access on menu-images"
   ON storage.objects FOR SELECT
   USING (bucket_id = 'menu-images');
 
 -- Allow insert / update / delete via anon key (admin panel uses anon key)
+DROP POLICY IF EXISTS "Anon upload to menu-images" ON storage.objects;
 CREATE POLICY "Anon upload to menu-images"
   ON storage.objects FOR INSERT
   WITH CHECK (bucket_id = 'menu-images');
 
+DROP POLICY IF EXISTS "Anon update menu-images" ON storage.objects;
 CREATE POLICY "Anon update menu-images"
   ON storage.objects FOR UPDATE
   USING (bucket_id = 'menu-images');
 
+DROP POLICY IF EXISTS "Anon delete menu-images" ON storage.objects;
 CREATE POLICY "Anon delete menu-images"
   ON storage.objects FOR DELETE
   USING (bucket_id = 'menu-images');

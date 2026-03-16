@@ -1,5 +1,11 @@
 # WORK_LOG
 
+## 2026-03-16 19:36:20 +05:30
+Summary: Added a global bottom attribution footer with creator symbol mark and "Created by abijithcb.com" link across the app.
+Files changed: src/app/layout.tsx, src/app/globals.css, WORK_LOG.md
+Verification: Ran `npm run lint` and `npm run build`; both passed and all routes prerender successfully.
+Issues: none
+
 ## 2026-03-16 19:34:41 +05:30
 Summary: Added drag-and-drop ordering for admin menu items list (card can be dragged from anywhere on the container) with persistent `sort_order` updates in Supabase; works in both All Items and category-filtered views. Also improved customer-side price emphasis by styling a clear rupee price pill with separated `₹` symbol and amount.
 Files changed: src/app/admin/menu-items/page.tsx, src/app/admin/menu-items/menuitems.module.css, src/app/components/MenuCard.tsx, src/app/components/MenuCard.module.css, WORK_LOG.md
